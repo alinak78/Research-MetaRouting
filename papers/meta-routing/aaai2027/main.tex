@@ -17,7 +17,7 @@
 
 \setcounter{secnumdepth}{1}
 
-\title{Learning Compositional Meta-Routing for Agentic Workflows: An Executable Benchmark}
+\title{Executable Operation Routing: Baseline Strength, Budget Constraints, and Lexical Shift}
 \author{Anonymous Submission}
 \affiliations{}
 
@@ -26,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-Agentic systems must decide not only what answer to produce, but which reasoning and execution operations should precede it. A controller may answer directly, decompose a request, retrieve evidence, execute code, delegate to a specialist, or verify an intermediate result. Existing routing work largely selects model endpoints, retrieval depth, or tools in isolation. We introduce an executable benchmark and a budget-aware meta-router that composes heterogeneous operations from raw task text. The benchmark contains 216 training, 72 development, 108 held-out test, and 108 locked lexical-shift challenge tasks across data analysis, frozen-corpus research, and document processing. Outcomes are machine checked after operations execute. Independent regularized logistic heads predict operation probabilities from word and character features, are temperature-scaled on development data, and are greedily composed under route-cost and action-count budgets. On the held-out test, the learned policy achieves 100\% success versus 93.5\% for strong static and fixed workflows, with 43\% lower cost than the static policy; a matched learned one-shot router reaches 56.5\%. On the untouched challenge split, learned success falls to 75.9\% and trails static routing at 93.5\%, while remaining 49\% cheaper and exceeding one-shot routing by 34.3 points. The gap identifies lexical generalization, rather than route execution, as the principal limitation. These results establish a reproducible testbed and a bounded proof of concept, not evidence of live-LLM performance.
+Agentic systems must select support operations before answering. We introduce a controlled executable benchmark for this decision: 216 training, 72 development, 108 standard-test, and 108 lexical-shift challenge tasks across three workloads. Here composition means pre-execution operation-subset selection followed by fixed canonical ordering, not learned planning or replanning. Independent logistic heads over word and character features reach 100\% standard-test success at 1.76 normalized cost units, but only 75.9\% on the challenge. Post-review controls materially narrow the interpretation: a complete-route classifier using the same features reaches 100\% and 93.5\%, respectively, while an outage-aware static workflow reaches 100\% on both splits at higher cost and without satisfying every route constraint. A development-selected static baseline satisfies the same constraints and reaches 87.0\% on both. The original budget of 4.5 cannot bind under a three-operation cap; a new binding-budget sweep measures compliance and feasible success separately. Family-clustered analysis does not support treating repeated template instances as independent evidence of a routing advantage. The contribution is an inspectable testbed and comparison protocol, with no demonstrated superiority of the independent-head heuristic or evidence of live-LLM transfer.
 \end{abstract}
 
 % Identifying code and artifact links are intentionally omitted for anonymous review.
@@ -37,18 +37,16 @@ Modern agentic applications combine language models with retrieval, code executi
 
 Prior research demonstrates the value of adaptive retrieval \citep{jeong2024adaptiverag}, cost-aware model routing \citep{chen2024frugalgpt,ong2025routellm}, optimized function-call plans \citep{kim2024llmcompiler}, and reflective planning \citep{yao2023react,zhang2026spiral}. Agent benchmarks evaluate planning and tool execution \citep{liu2024agentbench,yao2024taubench}, but fewer studies isolate the policy that selects among \emph{different classes} of cognitive and execution operations. This leaves two questions entangled: whether a controller identifies relevant capabilities and whether composing several capabilities is better than selecting one.
 
-We study that layer with an executable benchmark. Each task is presented to a policy only as raw text. A route may contain decomposition, retrieval, code execution, delegation, and verification before answering. Unlike our preliminary offline simulator, success is not sampled from annotated needs: operations transform task state, produce a candidate answer, and encounter deterministic failure conditions; an exact evaluator then checks the result. Labels are used only to train operation predictors and to analyze route quality.
+We study that layer with an executable benchmark. Each task is presented to a policy only as raw text. A route may contain decomposition, retrieval, code execution, delegation, and verification before answering. Unlike the repository's separate seeded operational simulator, which is not evidence for this study, success is not sampled from annotated needs: operations transform task state, produce a candidate answer, and encounter deterministic failure conditions; an exact evaluator then checks the result. Labels are used only to train operation predictors and to analyze route quality. Throughout, composition denotes subset selection before execution followed by a fixed canonical order. The learned component is multi-label operation classification; dependencies, ordering, and observation-conditioned replanning are not learned.
 
 Our contributions are:
-
 \begin{itemize}
-    \item an executable meta-routing benchmark with machine-checked data-analysis, research, and document-processing tasks, held-out templates, a locked lexical-shift challenge split, and component-outage cases;
-    \item a calibrated raw-text router that predicts multiple operation types and composes them under explicit action-count and cost budgets;
-    \item comparisons with direct, random, keyword, static-workload, fixed-agent, one-shot learned, and oracle policies on success, cost, local latency, budget compliance, and route quality; and
-    \item paired statistical analysis and ablations separating composition, character-level generalization, calibration, and budget enforcement.
+    \item a synthetic executable testbed with exact outcome checking, documented templates, and interpretable component failures;
+    \item comparisons between independent operation heads, complete-route classification, and static routes with explicit outage fallback and matched feasibility constraints; and
+    \item binding-budget sweeps, family-clustered inference, and route-change diagnostics that expose limits of the original routing claims.
 \end{itemize}
 
-The central result is deliberately scoped. The learned router solves all 108 standard test tasks while using 1.76 normalized cost units, compared with 93.5\% success and 3.08 units for a strong static policy. Under lexical shift, however, it misses aggregate computation, multi-hop retrieval, and conflict verification, reaching only 75.9\%. The result shows both the value of operation composition and the fragility of lightweight text routing.
+The central result is deliberately scoped. The learned router solves all 108 standard test tasks while using 1.76 normalized cost units, but this test influenced benchmark development. Its 75.9\% challenge success is below both complete-route classification and a feasible static control. The original single-operation comparison is a capacity ablation: many tasks cannot be solved with one support operation by construction. It does not establish that the proposed heuristic is better than other multi-operation policies.
 
 \section{Related Work}
 
@@ -56,7 +54,7 @@ The central result is deliberately scoped. The learned router solves all 108 sta
 FrugalGPT constructs model cascades to reduce inference cost, while RouteLLM learns to select between stronger and weaker models from preference data \citep{chen2024frugalgpt,ong2025routellm}. CP-Router uses uncertainty to choose between standard and long-reasoning models \citep{su2026cprouter}; ICL-Router represents endpoint capabilities through in-context vectors \citep{wang2026iclrouter}; and ZeroRouter uses a model-agnostic latent space to onboard unseen endpoints while optimizing accuracy, cost, and latency \citep{yan2026zerorouter}. Adaptive-RAG predicts question complexity and selects no retrieval, single-step retrieval, or iterative retrieval \citep{jeong2024adaptiverag}. These methods establish conditional routing as an operational optimization problem. Our decision variable is different: we compose heterogeneous operations around a model rather than choose a model or retrieval depth.
 
 \paragraph{Tool learning and workflow construction.}
-Toolformer learns when and how to call APIs \citep{schick2023toolformer}. API-Bank and ToolLLM provide resources for API planning, retrieval, and execution \citep{li2023apibank,qin2024toolllm}; AnyTool combines hierarchical retrieval with reflection after failed calls \citep{du2024anytool}; and RESTful-Llama studies an industry natural-language-to-API pipeline \citep{xu2024restful}. LLMCompiler exposes function dependencies for parallel execution and lower latency \citep{kim2024llmcompiler}, while Smurfs distributes tool planning across specialized agents and reduces context overhead \citep{chen2025smurfs}. These systems optimize tool-centered plans. We treat tool use as one optional operation beside decomposition, code, delegation, verification, and direct answering.
+Toolformer learns when and how to call APIs \citep{schick2023toolformer}. API-Bank and ToolLLM provide resources for API planning, retrieval, and execution \citep{li2023apibank,qin2024toolllm}; AnyTool combines hierarchical retrieval with reflection after failed calls \citep{du2024anytool}; and RESTful-Llama studies an industry natural-language-to-API pipeline \citep{xu2024restful}. LLMCompiler exposes function dependencies for parallel execution and lower latency \citep{kim2024llmcompiler}, while Smurfs distributes tool planning across specialized agents and reduces context overhead \citep{chen2025smurfs}. TaskBench evaluates decomposition, tool selection, and parameter prediction through tool graphs \citep{shen2024taskbench}. LLM-as-Scheduler dynamically selects workflows using a lightweight gate and an LLM scheduler \citep{xiang2026scheduler}. These precedents already address workflow-level control. These systems optimize tool-centered or agentic plans. We treat tool use as one optional operation beside decomposition, code, delegation, verification, and direct answering.
 
 \paragraph{Planning and verification.}
 ReAct interleaves reasoning with environmental action \citep{yao2023react}; SPIRAL separates planning, simulation, and critique inside reflective tree search \citep{zhang2026spiral}. ACPBench generates tasks with provably correct solutions from formal planning domains and finds uneven planning abilities across models \citep{kokel2025acpbench}. Our method is simpler: it predicts one bounded route before execution and does not perform search or observation-conditioned replanning. This simplicity makes the effect of route composition easier to isolate, at the cost of weaker adaptivity.
@@ -65,7 +63,7 @@ ReAct interleaves reasoning with environmental action \citep{yao2023react}; SPIR
 AgentBench, SWE-bench, and $\tau$-bench evaluate interactive, executable, or user-mediated behavior \citep{liu2024agentbench,jimenez2024swebench,yao2024taubench}. PlanningArena evaluates planning and tool selection at macro and micro levels \citep{zheng2025planningarena}; ToolSandbox adds stateful execution, intermediate milestones, and conversational evaluation \citep{lu2025toolsandbox}. AgentDiagnose measures trajectory competencies including decomposition, observation reading, verification, and backtracking \citep{ou2025agentdiagnose}. Our benchmark is smaller and less realistic, but provides controlled supervision and paired policy comparisons over several operation classes.
 
 \paragraph{Novelty boundary.}
-The contribution is not a new foundation model or general-purpose planner. It joins ideas normally evaluated separately: task-conditioned routing, multi-operation workflow construction, cost constraints, executable grading, and trajectory-level diagnosis. The matched one-shot learner sees the same text representation and supervision as the compositional router, so their difference isolates route composition more directly than comparisons against direct prompting alone.
+The contribution is a controlled executable integration of coarse operation-family routing and diagnostic evaluation. It is not a new classification algorithm or sequential planner. The complete-route control tests whether independent heads improve over another capable supervised policy; the single-operation control only tests a restricted route capacity.
 
 \section{Problem Formulation}
 
@@ -83,7 +81,7 @@ Executing $r$ on task $x$ produces candidate answer $\hat{y}$ and trace $z$. Suc
 
 \subsection{Tasks and Operations}
 
-The suite contains 504 tasks: 216 train, 72 development, 108 test, and 108 challenge examples, each balanced across three workloads. Prompt templates are disjoint across splits. The challenge prompts were locked after observing standard-test development behavior and use more distant paraphrases; no model or threshold was changed after their first run. Values, record identifiers, evidence entries, and document fields are generated deterministically from a fixed seed. Table~\ref{tab:tasks} summarizes the executable families.
+The suite contains 504 tasks: 216 train, 72 development, 108 test, and 108 challenge examples, each balanced across three workloads. There are 11 families (including the shared direct-literal family), with exactly one authored prompt template per family per split: 44 templates total. Templates are disjoint across splits, but generated values and identifiers do not create independent templates. The original experiment described challenge prompts as locked after standard-test development and retained without model changes. The current repository does not independently establish the historical lock timestamp. The post-review controls reuse these known splits and are exploratory; they do not restore an untouched confirmatory test. Values, record identifiers, evidence entries, and document fields are generated deterministically from a fixed seed. Table~\ref{tab:tasks} summarizes the executable families.
 
 \begin{table*}[t]
 \centering
@@ -108,25 +106,25 @@ Execution is order sensitive. Decomposition writes task-specific subgoals or fie
 
 The benchmark design separates four sources of difficulty. \emph{Selection} tasks require one non-answer operation. \emph{Composition} tasks require two or three dependent operations. \emph{Conflict} tasks provide a plausible but wrong intermediate candidate that verification must correct. \emph{Availability} tasks invalidate the usual retrieval path and require delegation. This taxonomy supports failure analysis beyond aggregate accuracy and prevents a direct policy from succeeding through answer-format heuristics on nonliteral tasks.
 
-The operation costs are $.45$ for decomposition, $1.00$ for retrieval, $1.15$ for code, $1.40$ for delegation, $.65$ for verification, and $.30$ for answering. Every task uses budget $B=4.5$. Costs represent relative component usage, not dollars or tokens.
+The operation costs are $.45$ for decomposition, $1.00$ for retrieval, $1.15$ for code, $1.40$ for delegation, $.65$ for verification, and $.30$ for answering. The original experiment uses budget $B=4.5$; the post-review sweep varies it. With three support operations, the maximum possible route cost is $1.40+1.15+1.00+.30=3.85$, so the original cost constraint cannot bind. Costs represent relative component usage, not dollars or tokens.
 
 \subsection{Raw-Text Operation Model}
 
-The router receives only the prompt text. We construct binary word unigrams, word bigrams, and character 3--5-gram features $\phi(x)$. For each operation $o$, a regularized logistic head estimates
+The router receives only the prompt text. We construct binary word unigrams, word bigrams, and character 3--5-gram features $\phi(x)$. For each operation $o$, a regularized logistic head produces a score
 
 \begin{equation}
 p_o(x)=\sigma(w_o^\top\phi(x)+b_o).
 \end{equation}
 
-Heads minimize class-balanced binary cross entropy with $\ell_2$ regularization on the training split. Optimization uses 500 full-batch gradient steps with a decaying learning rate. We temperature-scale each head on development data by minimizing Brier score over a fixed temperature grid. Development Brier scores range from $.00004$ for delegation to $.102$ for retrieval.
+Heads minimize class-balanced binary cross entropy with $\ell_2$ regularization on the training split. Optimization uses 500 full-batch gradient steps with a decaying learning rate. We temperature-scale each head on development data by minimizing Brier score over a fixed temperature grid. Temperature-scaled outputs are calibrated scores, not established natural-prior probabilities: temperature-only scaling does not in general correct the intercept shift induced by class balancing. Development Brier scores range from $.00004$ for delegation to $.102$ for retrieval.
 
 For operation $o$, the training objective is
 
 \begin{equation}
-\mathcal{L}_o=\mathrm{WBCE}(y,p_o(x))+\lambda\|w_o\|_2^2,
+\mathcal{L}_o=\mathrm{WBCE}(\ell_o,p_o(x))+\lambda\|w_o\|_2^2,
 \end{equation}
 
-where weighted binary cross entropy (WBCE) gives positive and negative examples equal total weight. We use learning rate $.35/\sqrt{1+e/50}$ at epoch $e$, $\lambda=.002$, and minimum document frequency 2. The resulting representation has 3,349 features. Training all five heads takes approximately $.12$ seconds on the reported CPU. Temperature selection chooses $.5$ for every head; the no-calibration ablation below tests whether this affects routes.
+where $\ell_o$ is the operation-presence target, distinct from the final answer $y$, and weighted binary cross entropy (WBCE) gives positive and negative examples equal total weight. We use learning rate $.35/\sqrt{1+e/50}$ at epoch $e$, $\lambda=.002$, and minimum document frequency 2. The resulting representation has 3,349 features. Training all five heads takes approximately $.12$ seconds on the reported CPU. Temperature selection chooses $.5$ for every head; the no-calibration ablation below tests whether this affects routes.
 
 The route threshold $\tau$ is selected from $\{.30,.35,\ldots,.70\}$ on development labels, prioritizing exact-route accuracy, then action F1, then lower cost. This yields $\tau=.40$. Candidate operations with $p_o(x)\geq\tau$ are ranked by $(p_o-\tau)/c(o)$ and greedily added while respecting $M=3$ and $B$. Operations are placed in canonical order $D,T,C,G,V$, followed by $A$. Algorithm~\ref{alg:router} gives the procedure.
 
@@ -150,13 +148,13 @@ The route threshold $\tau$ is selected from $\{.30,.35,\ldots,.70\}$ on developm
 
 \subsection{Baselines}
 
-We compare seven alternatives. \emph{Direct} always answers. \emph{Random} selects zero to three operations deterministically from the task identifier. \emph{Keyword} uses raw-text rules. \emph{Static workload} uses one route per workload. \emph{Fixed agent} always executes all five support operations. \emph{Learned one-shot} uses the same calibrated model but selects at most its highest-probability operation. \emph{Oracle} executes the annotated minimum route and serves as an upper bound. Static and fixed policies are deliberately strong: they solve all tasks except research outages.
+The original comparison contains seven alternatives. \emph{Direct} always answers. \emph{Random} selects zero to three operations deterministically from the task identifier. \emph{Keyword} uses raw-text rules. \emph{Static workload} uses one route per workload. \emph{Fixed agent} always executes all five support operations. \emph{Learned one-shot} uses the same calibrated model but selects at most its highest-probability operation. \emph{Oracle} executes the annotated minimum route and serves as an upper bound. Static and fixed policies solve all tasks except research outages, but violate the three-operation limit on document tasks; the fixed workflow also exceeds $B=4.5$. They are historical references, not constraint-matched controls. The original one-shot implementation used threshold $.50$, unlike the multi-operation threshold $.40$; the new runner uses $.40$ for both and preserves the old results as historical artifacts.
 
 \section{Experimental Protocol}
 
 We fit on train, calibrate and select $\tau$ on development, and report both standard test and the subsequently locked challenge split. No standard-test or challenge labels are used for fitting or threshold selection. Every policy runs every task in each evaluation split. We report machine-checked success, 2,000-sample task-bootstrap 95\% intervals, normalized route cost, local wall-clock route-plus-execution latency, budget compliance, exact-route match, and micro action precision/recall/F1. Paired success differences use task bootstrap intervals and an exact two-sided sign test over discordant outcomes.
 
-Experiments ran CPU-only on an Apple M5 system with 10 cores and 16 GB memory under macOS, Python 3.12.13, and NumPy 2.5.0. Routing and execution are repeated five times per task solely to stabilize sub-millisecond timing, then averaged. The local operations do not call an LLM or network service; latency therefore measures implementation overhead, not deployment latency.
+The original experiments were reported as CPU-only on an Apple M5 system with 10 cores and 16 GB memory under macOS, Python 3.12.13, and NumPy 2.5.0. In those original runs, routing and execution were repeated five times per task solely to stabilize sub-millisecond timing, then averaged. The added post-review runner uses one timing repetition and exports its local overhead separately. The local operations do not call an LLM or network service; latency therefore measures implementation overhead, not deployment latency.
 
 \section{Results}
 
@@ -183,7 +181,7 @@ Direct & .259 & [.185,.352] & .30 & .000 \\
 \end{tabular}
 \end{table}
 
-The learned budget policy solves all 108 tasks. Relative to static workload routing, it improves success by 6.48 points (paired 95\% CI [2.78,11.11], exact sign $p=.0156$) and reduces mean cost by 1.32 units, or 43.0\%. The difference consists of seven retrieval-outage tasks solved only by learned delegation. Relative to learned one-shot routing, composition improves success by 43.52 points ([34.26,52.78], $p<10^{-13}$) for $.40$ additional cost. This is the strongest evidence that multiple predicted operations, not text supervision alone, drive task completion.
+The learned budget policy solves all 108 tasks. Relative to static workload routing, it improves success by 6.48 points (paired 95\% CI [2.78,11.11], exact sign $p=.0156$) and reduces mean cost by 1.32 units, or 43.0\%. The difference consists of seven retrieval-outage tasks solved only by learned delegation. Relative to the historical learned one-shot control, allowing multiple operations improves success by 43.52 points ([34.26,52.78], $p<10^{-13}$) for $.40$ additional cost. This gap reaches the executor's single-operation capacity ceiling and is not evidence that the independent-head composition rule is preferable to another capable router.
 
 The learned policy has 100\% budget compliance versus 66.7\% for static routing and 0\% for the fixed agent. Its mean local latency is $.17$ ms, compared with less than $.01$ ms for rule policies; this difference is measurable but operationally negligible relative to model or tool calls.
 
@@ -241,7 +239,7 @@ Single operation & .565 & 1.36 & .643 \\
 \end{tabular}
 \end{table}
 
-Removing character features lowers success by 12.96 points despite increasing action F1. The word-only model is more precise but misses operations under held-out phrasing; character features favor recall. Restricting the model to one operation produces the largest loss. Calibration and budget ablations are identical to the full policy because they do not alter threshold crossings or activate the budget boundary on this split. They should not be credited for the main gain under the tested regime.
+Removing character features lowers success by 12.96 points despite increasing action F1. The word-only model is more precise but misses operations under held-out phrasing; character features favor recall. Restricting the model to one operation produces the largest loss. Calibration and budget ablations are identical on this test split. The original no-budget runner also relaxed the action cap; we corrected it to retain $M=3$, isolating cost enforcement. The new sweep below makes the cost constraint active. They should not be credited for the main gain under the tested regime.
 
 \subsection{Sensitivity and Failure Analysis}
 
@@ -255,7 +253,9 @@ Removing character features lowers success by 12.96 points despite increasing ac
 $\tau$ & Test & Cost & Challenge & Cost \\
 \midrule
 .30 & 1.000 & 1.76 & .759 & 1.56 \\
+.35 & 1.000 & 1.76 & .759 & 1.56 \\
 .40 & 1.000 & 1.76 & .759 & 1.56 \\
+.45 & 1.000 & 1.76 & .759 & 1.56 \\
 .50 & 1.000 & 1.76 & .722 & 1.52 \\
 .60 & 1.000 & 1.50 & .694 & 1.50 \\
 .65 & .963 & 1.48 & .639 & 1.17 \\
@@ -270,13 +270,33 @@ The challenge failures are sharply attributable. On aggregate prompts, mean code
 
 We also refit with 36, 72, 108, 144, and 216 training tasks. Standard and challenge success are unchanged at every size. Because each family repeats one training template with different values, this flat curve indicates redundancy, not exceptional sample efficiency. Broader template and domain diversity is necessary before drawing scaling conclusions.
 
+
+\subsection{Post-Review Controls and Binding Budgets}
+
+These added experiments were designed after reading the reviews and are exploratory. The original operation model, training data, temperatures, and development-selected threshold remain fixed. A multiclass logistic learner predicts complete annotated routes using the same train-only feature vocabulary, 500 optimization steps, learning-rate schedule, and regularization coefficient. It uses unweighted multiclass cross entropy and a development-selected softmax temperature; independent heads retain their original class-balanced binary loss. At inference it selects the highest-scoring complete route satisfying $M=3$ and the task cost budget. Its classes are the routes observed in training, so it cannot synthesize an unseen operation combination.
+
+The outage-aware static control replaces retrieval with delegation when the prompt explicitly states unavailability. Every outage prompt in every split has an explicit marker; the standard test has seven ``outage'' prompts and the challenge has seven ``cannot be reached'' prompts. No other prompt triggers the rule. This is a post-review prompt-health control, not recovery from an observed tool failure. It solves all tasks on both splits, removing the original accuracy margin, but retains the historical five-operation document workflow and is not fully feasible. The matched feasible control enumerates all 32 canonical support subsets on development examples, selecting the highest-success feasible route for each workload and prompt-health stratum, with ties resolved by cost and action count. It uses workload metadata, whereas learned policies use prompt text and budget; no task kind, payload, answer, unavailable-action annotation, or required-route label is read at inference.
+
+\input{revision_tables}
+
+Table~\ref{tab:revision} shows that complete-route classification matches standard success and raises challenge success from .759 to .935. Thus the lexical representation supports substantially better challenge performance under a different target and objective; this is not a controlled attribution to representation versus data alone. Independent heads remain cheaper on the original operating point, but are not uniformly better. The feasible static control reaches .870 on both splits; its fixed document route misses invoice reconciliation and cross-field checking. All family outcomes and all promised route-quality, feasibility, and local-latency metrics are exported with task traces.
+
+Table~\ref{tab:budgets} reports feasible success: correct answers satisfying both cost and action-count limits. At $B=1.75$, cost enforcement changes 40 of 108 test routes, and raises cost compliance from 63.0\% to 100\%; raw success falls from 100\% to 63.0\%. Both arms have the same 63.0\% feasible success. The constraint enforces resource limits, rather than improving answer accuracy. At $B=3.0$, seven routes change; no route changes at $B=3.85$ or $4.5$. Across the tested standard budgets the complete-route learner matches independent-head success, so these observations do not establish a benefit for ratio-greedy selection. Challenge outcomes at every budget are released as well.
+
+Temperature scaling changes 20 of 72 development routes at a fixed threshold $.40$, but no test or challenge routes. Retuning the unscaled model's threshold on development to $.45$ removes all route differences on all three splits. Calibration therefore has no demonstrated evaluated-outcome benefit here.
+
+We also resample the 11 complete task families, treating direct literals across workloads as one cluster. Against historical static routing, the standard macro-family success difference is .091 (family-bootstrap 95\% interval [0,.273]); only one family improves and the family-level sign test gives $p=1$. Against the complete-route learner, standard success ties; challenge macro-family success is .182 lower, with two losing families and family sign $p=.5$. These exploratory cluster results do not support the task-level $p=.0156$ as evidence across independent routing phenomena. Exact family outcomes are more informative than significance claims from so few templates.
+
+\paragraph{Inspectable router--executor boundary.}
+For an invoice containing items 4, 8, 12, and 16 with a stated total of 43, extraction writes both the items and stated total to state; code writes a computed total of 40; verification replaces the candidate 43 with 40; answering emits 40. These are family-specific Python handlers using the structured payload, not abilities learned by the text router. The released execution example includes an actual generated prompt, all predicted scores, the selected route, and state after every operation.
+
 \section{Discussion}
 
 \subsection{Interpretation and Novelty}
 
 Three conclusions follow within the benchmark. First, static workflows remain strong when workload identity predicts the needed route; they waste cost on easy tasks and fail under component outages, but are more robust to paraphrase than the learned lexical router. Second, predicting a single operation is insufficient for tasks such as filtered computation, multi-hop retrieval, invoice reconciliation, and locale normalization on both evaluation splits. Third, standard-test success alone overstates router quality: the learned policy matches the oracle on answers while selecting 28 unnecessary retrieval operations and then loses 24.1 success points under lexical shift.
 
-The method inherits task conditioning from adaptive retrieval, cost awareness from model routing, and modular operations from agent planning. Its novel unit of control is the heterogeneous operation route. Endpoint routers decide which model should answer; retrieval routers decide how much evidence to acquire; tool planners arrange calls within a tool-centered workflow. Our policy decides which kinds of reasoning and execution should constitute the workflow before those lower-level mechanisms run. The executable suite and matched one-shot control make this distinction empirically testable.
+The useful scientific observation is the sensitivity of apparent routing gains to baseline capacity, explicit health information, and the unit of statistical analysis. Complete-route classification is a stronger lexical-shift comparator than the original one-operation control; a simple health fallback removes the historical static accuracy gap. The testbed exposes these confounds but does not establish a novel learning mechanism or transferable agentic reasoning.
 
 \subsection{Deployment Implications}
 
@@ -284,7 +304,7 @@ A practical system could use this router above existing model and tool routers. 
 
 The present classifier is intentionally lightweight and interpretable. A deployment router should replace lexical features with representations trained across broader tasks, condition on execution history and component health, and replan after observations. A constrained contextual bandit or Markov decision process could optimize success and cost online, while retaining static routes as fallbacks when uncertainty is high.
 
-The challenge result suggests a concrete hybrid. When calibrated operation probabilities are diffuse or fall near threshold, the controller can back off to a workload route rather than answer with an incomplete composition. On the current challenge set, static routing covers the aggregate, multi-hop, and conflict families missed by the learner, while learned delegation covers the static policy's outage failures. A learned confidence gate between these policies is a natural next baseline, but we leave it unevaluated to avoid tuning on the locked challenge split.
+The evaluated static fallback uses explicit prompt-health markers. A confidence-gated learned/static hybrid, semantic encoder, or observation-conditioned recovery policy remains untested. These deployment ideas require separate evidence and should not be inferred from the present experiments.
 
 \subsection{Limitations and Threats to Validity}
 
@@ -298,10 +318,10 @@ Minimum-route labels and executor semantics are designed together. The executor 
 The locked challenge split exposes surface-form fragility but does not test new domains, languages, tools, or long interactive horizons. PlanningArena and ToolSandbox contain richer stateful interactions \citep{zheng2025planningarena,lu2025toolsandbox}; SWE-bench and $\tau$-bench provide more realistic executable and user-mediated outcomes \citep{jimenez2024swebench,yao2024taubench}. Evaluation on those settings, semantic encoders, multiple model families, and adversarial distribution shifts is required.
 
 \paragraph{Benchmark-development validity.}
-The standard test influenced benchmark and feature development before the challenge split was introduced. We therefore treat standard-test performance as an in-benchmark result, not a pristine confirmatory estimate. The challenge templates were subsequently locked and the first-run outcome was retained without model changes, but they were still authored with knowledge of the benchmark ontology. An independently constructed task suite is needed for confirmatory evaluation.
+The standard test influenced benchmark and feature development before the challenge split was introduced. We therefore treat standard-test performance as an in-benchmark result, not a pristine confirmatory estimate. The challenge templates were subsequently locked and the first-run outcome was retained without model changes, but they were still authored with knowledge of the benchmark ontology. An independently constructed task suite is needed for confirmatory evaluation. Current split and source hashes document reproducibility from this revision onward; they cannot reconstruct historical lock evidence or a complete list of changes made after observing the standard test.
 
 \paragraph{Statistical validity.}
-Task bootstrap intervals quantify variation over this finite suite. The 100\% success interval is degenerate and does not estimate performance on an external task population. Exact sign tests cover paired outcome differences but do not correct across every exploratory comparison. Future work should preregister a larger benchmark and report family-stratified uncertainty.
+Task bootstrap intervals quantify variation over this finite suite. The 100\% success interval is degenerate and does not estimate performance on an external task population. Exact sign tests cover paired outcome differences but do not correct across every exploratory comparison. The new family-clustered analysis treats all instances of each family as one unit, but 11 authored families still cannot identify uncertainty over independent real tasks. Future work should preregister an external benchmark.
 
 \section*{Ethical Statement}
 

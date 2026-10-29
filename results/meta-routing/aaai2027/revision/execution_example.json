@@ -1,0 +1,87 @@
+{
+  "task_id": "test-document_processing-002",
+  "prompt": "Audit this billing record: extract the entries, execute the calculation, and verify the payable total: Invoice I-002; Items: 23,10,35,11; Stated total: 77",
+  "scores": {
+    "decompose": 1.8899559289724295e-05,
+    "use_tool": 0.9999773998197525,
+    "execute_code": 0.9772758346379803,
+    "delegate": 7.793242803665675e-05,
+    "verify": 0.9996303486774706
+  },
+  "selected_route": [
+    "use_tool",
+    "execute_code",
+    "verify",
+    "answer"
+  ],
+  "router_inputs": "prompt and budget only; payload is executor-only",
+  "executor_kind": "invoice_reconcile",
+  "expected_answer": "79",
+  "steps": [
+    {
+      "action": "use_tool",
+      "decomposed": false,
+      "candidate": "77",
+      "artifacts": {
+        "items": [
+          23,
+          10,
+          35,
+          11
+        ],
+        "stated_total": 77
+      },
+      "failed_action": null
+    },
+    {
+      "action": "execute_code",
+      "decomposed": false,
+      "candidate": "77",
+      "artifacts": {
+        "items": [
+          23,
+          10,
+          35,
+          11
+        ],
+        "stated_total": 77,
+        "computed_total": 79
+      },
+      "failed_action": null
+    },
+    {
+      "action": "verify",
+      "decomposed": false,
+      "candidate": "79",
+      "artifacts": {
+        "items": [
+          23,
+          10,
+          35,
+          11
+        ],
+        "stated_total": 77,
+        "computed_total": 79
+      },
+      "failed_action": null
+    },
+    {
+      "action": "answer",
+      "decomposed": false,
+      "candidate": "79",
+      "artifacts": {
+        "items": [
+          23,
+          10,
+          35,
+          11
+        ],
+        "stated_total": 77,
+        "computed_total": 79
+      },
+      "failed_action": null
+    }
+  ],
+  "answer": "79",
+  "failure_mode": null
+}

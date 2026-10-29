@@ -256,13 +256,14 @@ class RandomExecutablePolicy(ExecutablePolicy):
 class LearnedOneShotPolicy(ExecutablePolicy):
     name = "learned_one_shot"
 
-    def __init__(self, model: CalibratedTextOperationModel) -> None:
+    def __init__(self, model: CalibratedTextOperationModel, threshold: float = 0.5) -> None:
         self.model = model
+        self.threshold = threshold
 
     def route(self, task: ExecutableTask) -> RoutePlan:
         probabilities = self.model.predict_proba(task.prompt)
         action, confidence = max(probabilities.items(), key=lambda item: item[1])
-        actions = (action,) if confidence >= 0.5 else ()
+        actions = (action,) if confidence >= self.threshold else ()
         return RoutePlan(
             actions=(*actions, RouteAction.ANSWER),
             confidence=confidence,

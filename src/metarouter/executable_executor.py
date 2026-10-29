@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 import time
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from statistics import mean
 from typing import Any
 
@@ -141,7 +141,10 @@ def _verify(task: ExecutableTask, state: _State) -> None:
         state.candidate = f"{state.artifacts['region']}-{state.artifacts['serial']}"
 
 
-def _execute_once(task: ExecutableTask, plan: RoutePlan) -> tuple[str, str | None]:
+def _execute_once(
+    task: ExecutableTask, plan: RoutePlan,
+    state_history: list[dict[str, Any]] | None = None,
+) -> tuple[str, str | None]:
     state = _State()
     handlers = {
         RouteAction.DECOMPOSE: _decompose,
@@ -156,8 +159,12 @@ def _execute_once(task: ExecutableTask, plan: RoutePlan) -> tuple[str, str | Non
         if action == RouteAction.ANSWER:
             if state.candidate is None:
                 state.candidate = _direct_answer(task)
+            if state_history is not None:
+                state_history.append({"action": action.value, **asdict(state)})
             break
         handlers[action](task, state)
+        if state_history is not None:
+            state_history.append({"action": action.value, **asdict(state)})
     answer = state.candidate or ""
     failure = None
     if state.failed_action is not None:
@@ -211,3 +218,10 @@ def execute_task(
         rationale=plan.rationale,
         failure_mode=failure,
     )
+
+
+def inspect_execution(task: ExecutableTask, plan: RoutePlan) -> dict[str, Any]:
+    """Expose actual handler state transitions for an auditable example."""
+    history: list[dict[str, Any]] = []
+    answer, failure = _execute_once(task, plan, state_history=history)
+    return {"steps": history, "answer": answer, "failure_mode": failure}

@@ -93,3 +93,20 @@ MIT - see [LICENSE](LICENSE) when present in this repository.
   url     = {https://github.com/anote-ai/research-metarouting}
 }
 ```
+
+## Post-review revision
+
+The paper and evaluation now include complete-route classification, explicit
+outage fallback, a constraint-matched development-selected static control,
+binding-budget sweeps, and family-clustered inference. Reproduce with:
+
+```bash
+PYTHONPATH=src python experiments/meta-routing/aaai2027/run_review_revision.py
+python experiments/meta-routing/aaai2027/check_revision_results.py
+```
+
+See `papers/meta-routing/aaai2027/FEEDBACK_RESPONSE.md` for changes, results, and
+unresolved external-validation and historical-provenance gaps. The revised PDF
+is `output/pdf/MetaRouting_Revised.pdf`. Previously submitted PDF/source bundles
+are historical; they do not contain this revision. These new comparisons are
+post-review exploratory analyses, not a new independent test.

@@ -1,0 +1,7 @@
+split,comparison,uncalibrated_threshold,changed_routes
+dev,fixed_threshold,0.4,20
+dev,retuned_on_dev,0.45,0
+test,fixed_threshold,0.4,0
+test,retuned_on_dev,0.45,0
+challenge,fixed_threshold,0.4,0
+challenge,retuned_on_dev,0.45,0

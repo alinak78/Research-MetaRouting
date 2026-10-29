@@ -201,3 +201,40 @@ def workload_success(
     for (policy, workload), outcomes in grouped.items():
         result[policy][workload] = mean(outcomes)
     return dict(result)
+
+
+def compare_executable_families(
+    traces: list[ExecutableTrace], treatment: str, baseline: str,
+) -> dict[str, object]:
+    """Paired macro-family effect; resample whole kinds, not template instances.
+
+    The repeated direct-literal family is one cluster across workloads. This is
+    exploratory uncertainty over the observed families, not an external-population
+    guarantee. Complete pairing is required; missing tasks must not vanish silently.
+    """
+    arms = {policy: [trace for trace in traces if trace.policy == policy]
+            for policy in (treatment, baseline)}
+    indexed = {policy: {trace.task_id: trace for trace in arm}
+               for policy, arm in arms.items()}
+    if any(len(indexed[policy]) != len(arm) for policy, arm in arms.items()):
+        raise ValueError('duplicate task IDs in comparison')
+    if not indexed[treatment] or indexed[treatment].keys() != indexed[baseline].keys():
+        raise ValueError('comparison requires identical nonempty paired task sets')
+    families: dict[str, list[float]] = defaultdict(list)
+    for task_id, treated in indexed[treatment].items():
+        control = indexed[baseline][task_id]
+        if treated.kind != control.kind or treated.split != control.split:
+            raise ValueError('paired task family and split must agree')
+        families[treated.kind].append(float(treated.success) - float(control.success))
+    effects = [mean(values) for values in families.values()]
+    low, high = _bootstrap_mean_interval(effects, seed=2703)
+    wins = sum(effect > 0 for effect in effects)
+    losses = sum(effect < 0 for effect in effects)
+    return {
+        'treatment': treatment, 'baseline': baseline, 'n_families': len(effects),
+        'macro_family_success_difference': mean(effects),
+        'family_bootstrap_ci95_low': low, 'family_bootstrap_ci95_high': high,
+        'treatment_only_families': wins, 'baseline_only_families': losses,
+        'family_sign_p': _exact_sign_p(wins, losses),
+        'family_effects': {kind: mean(values) for kind, values in sorted(families.items())},
+    }

@@ -14,6 +14,7 @@ FILES = (
     "src/metarouter/executable_tasks.py",
     "src/metarouter/executable_executor.py",
     "src/metarouter/text_router.py",
+    "src/metarouter/review_baselines.py",
     "src/metarouter/executable_evaluation.py",
     "src/metarouter/executable_benchmark.py",
     "experiments/meta-routing/aaai2027/run_executable.py",
@@ -22,6 +23,10 @@ FILES = (
     "experiments/meta-routing/aaai2027/run_sensitivity.py",
     "experiments/meta-routing/aaai2027/check_paper_results.py",
     "tests/test_executable_metarouter.py",
+    "tests/test_review_revision.py",
+    "experiments/meta-routing/aaai2027/run_review_revision.py",
+    "experiments/meta-routing/aaai2027/check_revision_results.py",
+    "papers/meta-routing/aaai2027/revision_tables.tex",
     "papers/meta-routing/aaai2027/main.tex",
     "papers/meta-routing/aaai2027/references.bib",
 )
@@ -31,6 +36,7 @@ DIRECTORIES = (
     "results/meta-routing/aaai2027/ablations",
     "results/meta-routing/aaai2027/challenge",
     "results/meta-routing/aaai2027/sensitivity",
+    "results/meta-routing/aaai2027/revision",
 )
 
 FORBIDDEN = (

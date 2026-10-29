@@ -42,9 +42,9 @@ Run `python experiments/meta-routing/aaai2027/prepare_submission.py` from the re
 to compile, remove PDF metadata, scan for identifying strings, verify page size
 and embedded fonts, and write the OpenReview PDFs.
 
-## Submission Readiness
+## Historical Submission Artifacts
 
-The submission directory contains:
+The historical submission directory contains:
 
 - `AAAI27_Anonymous.pdf`: seven-page anonymous main paper
 - `AAAI27_ReproducibilityChecklist.pdf`: separate completed checklist
@@ -53,3 +53,20 @@ The submission directory contains:
 The manuscript uses executable local components, not live LLM or network tools;
 normalized cost is not API pricing. This is stated throughout the paper. It must
 not be submitted concurrently with a substantially similar archival DAI paper.
+
+## Post-review revision
+
+The paper and evaluation now include complete-route classification, explicit
+outage fallback, a constraint-matched development-selected static control,
+binding-budget sweeps, and family-clustered inference. Reproduce with:
+
+```bash
+PYTHONPATH=src python experiments/meta-routing/aaai2027/run_review_revision.py
+python experiments/meta-routing/aaai2027/check_revision_results.py
+```
+
+See `papers/meta-routing/aaai2027/FEEDBACK_RESPONSE.md` for changes, results, and
+unresolved external-validation and historical-provenance gaps. The revised PDF
+is `output/pdf/MetaRouting_Revised.pdf`. Previously submitted PDF/source bundles
+are historical; they do not contain this revision. These new comparisons are
+post-review exploratory analyses, not a new independent test.

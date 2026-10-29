@@ -1,0 +1,13 @@
+split,budget,n,cost_enforcement_changed_routes,unconstrained_routes_over_budget
+test,1.0,108,108,108
+test,1.75,108,40,40
+test,2.5,108,14,14
+test,3.0,108,7,7
+test,3.85,108,0,0
+test,4.5,108,0,0
+challenge,1.0,108,96,96
+challenge,1.75,108,33,33
+challenge,2.5,108,14,14
+challenge,3.0,108,7,7
+challenge,3.85,108,0,0
+challenge,4.5,108,0,0

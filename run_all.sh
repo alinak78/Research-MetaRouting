@@ -36,6 +36,10 @@ python experiments/meta-routing/aaai2027/run_ablations.py
 echo "==> Running AAAI sensitivity analysis"
 python experiments/meta-routing/aaai2027/run_sensitivity.py
 
+echo "==> Running post-review controls and binding-budget analysis"
+python experiments/meta-routing/aaai2027/run_review_revision.py
+python experiments/meta-routing/aaai2027/check_revision_results.py
+
 echo "==> Generating AAAI figures"
 python experiments/meta-routing/aaai2027/plot_executable.py
 

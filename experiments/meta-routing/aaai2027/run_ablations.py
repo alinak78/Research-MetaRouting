@@ -47,7 +47,7 @@ def main() -> None:
         LearnedBudgetPolicy(
             full_model,
             full_threshold,
-            max_actions=5,
+            max_actions=3,
             name="no_budget",
             enforce_budget=False,
         ),

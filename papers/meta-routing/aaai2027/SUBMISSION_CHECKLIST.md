@@ -1,3 +1,7 @@
+> Historical checklist for the original submission. The post-review revision
+> is documented in `FEEDBACK_RESPONSE.md`; the earlier page-count and bundle
+> checks below do not certify the revised artifacts.
+
 # AAAI-27 Meta-Routing Submission Checklist
 
 Checked against the official AAAI-27 Main Technical Track submission

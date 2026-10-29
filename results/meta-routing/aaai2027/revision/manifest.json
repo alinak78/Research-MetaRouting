@@ -1,0 +1,66 @@
+{
+  "budgets": [
+    1.0,
+    1.75,
+    2.5,
+    3.0,
+    3.85,
+    4.5
+  ],
+  "joint_temperature": 0.5,
+  "max_support_actions": 3,
+  "maximum_three_support_route_cost": 3.8499999999999996,
+  "outage_prompt_markers": {
+    "challenge": {
+      "marked_other_tasks": 0,
+      "marked_outage_tasks": 7,
+      "outage_tasks": 7
+    },
+    "dev": {
+      "marked_other_tasks": 0,
+      "marked_outage_tasks": 4,
+      "outage_tasks": 4
+    },
+    "test": {
+      "marked_other_tasks": 0,
+      "marked_outage_tasks": 7,
+      "outage_tasks": 7
+    },
+    "train": {
+      "marked_other_tasks": 0,
+      "marked_outage_tasks": 14,
+      "outage_tasks": 14
+    }
+  },
+  "source_sha256": {
+    "src/metarouter/__init__.py": "3c174c682560587be403143a3bb9182307cfd855e29912641f90a66ccbeb712a",
+    "src/metarouter/benchmark.py": "b5620c1787d4da6e2ce56d72227bb62382c7727bc7a2aedc37fba59739c78b7a",
+    "src/metarouter/cli.py": "40d9359f67c6e60801b2e786bbd9749ba1437d6c19745808c17bb537eb83fab0",
+    "src/metarouter/evaluation.py": "eadc28b56206298b35e19fc2fc1a865fe688fda1b182e240fdc13bc5c4f3ec34",
+    "src/metarouter/executable_benchmark.py": "108fb60ba29bb94de6b3f4e3fec272348a96daef43749795d2ad7323f4592641",
+    "src/metarouter/executable_evaluation.py": "aeeaf1a1642c3dae8eafe75cd8419393ef4a9dc15d4657241dae83cdd1d142af",
+    "src/metarouter/executable_executor.py": "cda9bde1d560478a4408ef54b0bb84f618c4f9641de65d069e549d7a1a52ad88",
+    "src/metarouter/executable_models.py": "a10184cc2fe0dd70f3e8000aee008cc39e47a366c027ca0a0fc226a634ad23d5",
+    "src/metarouter/executable_tasks.py": "6cd07af6c2b9338b3503e4d3a998f3260d74aed6a70cca81b9925c652e4f8740",
+    "src/metarouter/models.py": "9a80be814769b6d60e55f7654ff7b074225a98c9e0249d0fa5d206e0bd2d8705",
+    "src/metarouter/policies.py": "96d4be64efa314685176a1ba3bbd03d0cb1bc7e676a08f02e74b20c180d14433",
+    "src/metarouter/review_baselines.py": "3750f4becc1ec6407edf54840013d62549fd87954b4bb2a9b4986d4750741ec7",
+    "src/metarouter/simulator.py": "b84d89e332061f0c6285bf0634b19a7e7a8316477a1cb11aaec4b6378b017459",
+    "src/metarouter/text_router.py": "477d45426150bdb22c86f9972caea1eb0d91ac7d10b720e52716fd3258978915",
+    "src/metarouter/workloads.py": "50f6a44ee6119f5bd80fc041a020c6f3892a0d192a1eecef216c6a2071adcbb2"
+  },
+  "split_sha256": {
+    "challenge": "237e3ac97dc5017c1ce25246f8121f344312bb9798b78971b7222daeb5255a43",
+    "dev": "58618c7dd241f41a9ee508406e0dd3c0b37bd68d5a4db0fcdf80fdff8e9ae2e2",
+    "test": "83e4c933373e478a41535bd13aaa21fc73177b67b7cbb9e413ac68f7ac756ab6",
+    "train": "64fba166717aeaa3e74def5c6412a08f11e77e4695fe1690f73077fc92cfcc71"
+  },
+  "status": "post-review exploratory analysis; current fingerprints, not historical lock evidence",
+  "template_independence": "one authored template per kind per split; generated values are not independent templates",
+  "threshold": 0.4,
+  "unresolved": [
+    "independently authored external evaluation",
+    "live fallible tool or LLM validation",
+    "historical challenge lock timestamp and complete benchmark-development log"
+  ]
+}
