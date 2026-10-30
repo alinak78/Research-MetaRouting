@@ -1,0 +1,15 @@
+{
+  "abstract_words": 201,
+  "references": 11,
+  "main_episodes": 116640,
+  "extension_episodes": 38880,
+  "test_queries": 72,
+  "dev_queries": 72,
+  "new_study": true,
+  "original_results_reused": false,
+  "frozen_config_sha256": "b783b2bc2605645bf3348aa8fee7498f0a80bcf2cf623fa24ff675d9b78d0b6e",
+  "verified_summary_files": [
+    "summary.csv",
+    "collision_summary.csv"
+  ]
+}

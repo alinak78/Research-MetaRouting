@@ -1,0 +1,36 @@
+{
+  "risk": {
+    "count": 0.011111111111111112,
+    "sum": 0.044444444444444446,
+    "mean": 0.10833333333333334,
+    "max": 0.19166666666666668
+  },
+  "gate_threshold": {
+    "1": 1.0,
+    "2": 0.0,
+    "3": 0.0
+  },
+  "selected_fixed_policy": {
+    "1": "numpy_only",
+    "2": "numpy_only",
+    "3": "numpy_only"
+  },
+  "selection_data": "72 development queries; first four regimes only; ten seeds",
+  "utility": "correct - 4*wrong - 0.05*calls",
+  "source_sha256": {
+    "src/metarouter/recovery_study.py": "ab4be64a55b3304eaff984eafd0546e464a6bf6089c4a1e7c8f9fb1ec082ce62",
+    "experiments/meta-routing/intellisys2027/run_recovery.py": "ae35eeafbaf60e82e4892b7bb1705b7503c058c7102a055fafb8cc377df1913e",
+    "papers/meta-routing/intellisys2027/STUDY_PROTOCOL.md": "579e915fbbe89ed6630a68a4c193ab18da5fbdd8a281c842ae6c44599342c13d"
+  },
+  "raw_sha256": {
+    "iris": "d11fe30213d36434a0879aab7cb00ce3c812eb7ba2495874438abff7b7b762e9",
+    "wine": "2bae62c4481220623579d4c4fb36b55652b6b75e06e49fa1981b8198362dfdab",
+    "banknote": "1e2acd9a2085fadf3d8145c12d3d22af853320d52294a6590c2eaf75fdc05227"
+  },
+  "queries_sha256": "7e3efdedca7195b134278cbc9dbd069bbe224969be8cc3154cec8f1aba31eeac",
+  "test_policy_tuning": false,
+  "timestamp_before_test_unix": 1793247593.0472891,
+  "external_preregistration": false,
+  "python": "3.12.14",
+  "numpy": "2.5.4"
+}

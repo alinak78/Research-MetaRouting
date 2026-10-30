@@ -1,0 +1,17 @@
+\begin{table}[!htbp]
+\caption{Main fault interventions; labels are hidden from controllers.}
+\label{tab:regimes}
+\centering\small
+\begin{tabular}{p{.20\textwidth}p{.71\textwidth}}
+\toprule
+Regime & Intervention \\
+\midrule
+Clean & No injection; each engine executes its ordinary computation. \\
+Transient & SQLite first attempt raises an exception; a retry can succeed. \\
+Persistent & Every SQLite attempt raises an exception; alternatives work. \\
+Independent & Family-dependent, persistent per-engine corruption; distinct wrong offsets. \\
+Shifted & Independent corruption probabilities doubled; offsets unchanged. \\
+Correlated & One shared event adds the same offset to every engine response. \\
+\bottomrule
+\end{tabular}
+\end{table}

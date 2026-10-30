@@ -1,0 +1,7 @@
+{
+  "status": "Post-main-run exploratory sensitivity; no retuning",
+  "reason": "Engine-specific offsets make agreement between wrong independent responses impossible; permit coinciding wrong values instead.",
+  "frozen_config_sha256": "b783b2bc2605645bf3348aa8fee7498f0a80bcf2cf623fa24ff675d9b78d0b6e",
+  "source_sha256": "a699e430af37b959a862111d61195779f292d8978c25583d21d6840ef2960c83",
+  "timestamp_before_extension": 1793247684.506193
+}

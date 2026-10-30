@@ -1,0 +1,19 @@
+\begin{table}[!htbp]
+\caption{Three-call results: percentages of correct, wrong, and abstained episodes.}
+\label{tab:main}
+\centering\small
+\begin{tabular}{llrrrr}
+\toprule
+Faults & Policy & Correct & Wrong & Abstain & Calls \\
+\midrule
+Independent & Selected single engine & 91.9 & 8.1 & 0.0 & 1.000 \\
+Independent & Retry / switch / SQLite & 81.8 & 18.2 & 0.0 & 1.000 \\
+Independent & Agreement / fitted gate & 94.4 & 0.0 & 5.6 & 2.257 \\
+Independent & Fixed majority & 94.4 & 0.0 & 5.6 & 3.000 \\
+Doubled & Selected single engine & 85.1 & 14.9 & 0.0 & 1.000 \\
+Doubled & Retry / switch / SQLite & 62.6 & 37.4 & 0.0 & 1.000 \\
+Doubled & Agreement / fitted gate & 83.6 & 0.0 & 16.4 & 2.471 \\
+Doubled & Fixed majority & 83.6 & 0.0 & 16.4 & 3.000 \\
+\bottomrule
+\end{tabular}
+\end{table}

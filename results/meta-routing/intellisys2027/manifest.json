@@ -1,0 +1,21 @@
+{
+  "episodes": 116640,
+  "test_queries": 72,
+  "dev_queries": 72,
+  "seeds": 10,
+  "regimes": 6,
+  "policies": 9,
+  "budgets": [
+    1,
+    2,
+    3
+  ],
+  "dataset_rows": {
+    "iris": 150,
+    "wine": 178,
+    "banknote": 1372
+  },
+  "frozen_config_sha256": "b783b2bc2605645bf3348aa8fee7498f0a80bcf2cf623fa24ff675d9b78d0b6e",
+  "traces_sha256": "47aea1ec2c750d0237226e1118704a514d393a5b23cc99910dce235b6cefba33",
+  "scope": "Actual numerical engines; authored query tasks; injected stress faults; no LLMs or production-rate claim."
+}
